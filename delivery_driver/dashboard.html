@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard - Food Delivery System</title>
+    <link rel="stylesheet" href="../public_html/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/driver_style.css">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Driver Panel</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
+                    </ul>
+                <span class="navbar-text me-3">Welcome, <span id="driverUsername">Driver!</span></span>
+                <button class="btn btn-outline-light" id="driverLogoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Your Assigned Orders</h1>
+
+        <div id="noOrdersMessage" class="alert alert-info d-none" role="alert">
+            You currently have no assigned orders.
+        </div>
+
+        <div class="row" id="assignedOrdersList">
+            </div>
+
+        </div>
+
+    <script src="../public_html/js/utils.js"></script> <script src="js/driver_auth.js"></script> <script src="js/driver_dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Restaurants - Admin</title>
+    <link rel="stylesheet" href="../public_html/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/admin_style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Panel</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="restaurants_mgt.html">Restaurants</a></li>
+                    <li class="nav-item"><a class="nav-link" href="menu_mgt.html">Menu Items</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders_mgt.html">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="drivers_mgt.html">Delivery Drivers</a></li>
+                </ul>
+                <button class="btn btn-outline-light" id="adminLogoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Manage Restaurants</h1>
+
+        <div class="card mb-4">
+            <div class="card-header">Add/Edit Restaurant</div>
+            <div class="card-body">
+                <form id="restaurantForm">
+                    <input type="hidden" id="restaurantId">
+                    <div class="mb-3">
+                        <label for="restaurantName" class="form-label">Restaurant Name</label>
+                        <input type="text" class="form-control" id="restaurantName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="restaurantDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="restaurantDescription" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="saveRestaurantBtn">Save Restaurant</button>
+                    <button type="button" class="btn btn-secondary d-none" id="cancelEditBtn">Cancel Edit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Existing Restaurants</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="restaurantsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../public_html/js/utils.js"></script>
+    <script src="js/admin_auth.js"></script>
+    <script src="js/admin_restaurants.js"></script>
+</body>
+</html>

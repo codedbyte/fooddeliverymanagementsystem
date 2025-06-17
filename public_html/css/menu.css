@@ -1,0 +1,30 @@
+/* public_html/css/menu.css */
+
+.menu-item-card {
+    display: flex;
+    flex-direction: row;
+    height: 100%; /* Ensure cards in a row have similar height */
+}
+
+.menu-item-card .row.g-0 {
+    width: 100%; /* Ensure inner row takes full width */
+}
+
+.menu-item-card .card-img-top {
+    width: 100%;
+    height: 100%; /* Make image fill its container */
+    object-fit: cover;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 10px;
+}
+
+.menu-item-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-item-card .card-text.fw-bold {
+    font-size: 1.25rem;
+    color: #28a745;
+}

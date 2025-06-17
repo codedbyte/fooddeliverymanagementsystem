@@ -1,0 +1,85 @@
+/* public_html/css/tracking.css */
+
+.tracking-progress-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.tracking-progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #e0e0e0;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+.tracking-progress-bar .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    color: #6c757d;
+}
+
+.tracking-progress-bar .step::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    border: 3px solid #e0e0e0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.tracking-progress-bar .step.active::before {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.tracking-progress-bar .step.active span {
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* Styles for steps that are completed (passed) */
+.tracking-progress-bar .step.active ~ .step::before {
+    background-color: #e0e0e0; /* Reset color for subsequent steps */
+    border-color: #e0e0e0;
+}
+
+.tracking-progress-bar .step.active:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(100% - 20px); /* Adjust line length */
+    height: 4px;
+    background-color: #28a745;
+    transform: translate(0%, -50%);
+    z-index: -1;
+}
+
+/* Specific styling for each stage's circle to be active */
+/* This needs to be handled dynamically by JS, adding 'active' class */
+.tracking-progress-bar .step.pending.active::before { background-color: #28a745; border-color: #28a745; }
+.tracking-progress-bar .step.processing.active::before { background-color: #28a745; border-color: #28a745; }
+.tracking-progress-bar .step.assigned.active::before { background-color: #28a745; border-color: #28a745; }
+.tracking-progress-bar .step.picked_up.active::before { background-color: #28a745; border-color: #28a745; }
+.tracking-progress-bar .step.on_the_way.active::before { background-color: #28a745; border-color: #28a745; }
+.tracking-progress-bar .step.delivered.active::before { background-color: #28a745; border-color: #28a745; }
+
+.current-status-info {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #555;
+}

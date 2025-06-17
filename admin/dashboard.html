@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Food Delivery System</title>
+    <link rel="stylesheet" href="../public_html/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/admin_style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Panel</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="restaurants_mgt.html">Restaurants</a></li>
+                    <li class="nav-item"><a class="nav-link" href="menu_mgt.html">Menu Items</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders_mgt.html">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="drivers_mgt.html">Delivery Drivers</a></li>
+                </ul>
+                <button class="btn btn-outline-light" id="adminLogoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Welcome, Admin!</h1>
+        <p>This is your central dashboard for managing the food delivery system.</p>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Orders</h5>
+                        <p class="card-text fs-1" id="totalOrders">...</p>
+                        <a href="orders_mgt.html" class="btn btn-primary">Manage Orders</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Orders</h5>
+                        <p class="card-text fs-1" id="pendingOrders">...</p>
+                        <a href="orders_mgt.html?status=pending" class="btn btn-warning">View Pending</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Registered Users</h5>
+                        <p class="card-text fs-1" id="registeredUsers">...</p>
+                        </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <script src="../public_html/js/utils.js"></script>
+    <script src="js/admin_auth.js"></script> <script src="js/admin_dashboard.js"></script>
+</body>
+</html>

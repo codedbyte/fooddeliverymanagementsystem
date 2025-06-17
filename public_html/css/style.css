@@ -1,0 +1,53 @@
+/* public_html/css/style.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.navbar {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #28a745 !important; /* Green brand color */
+}
+
+.hero-section {
+    background: url('https://via.placeholder.com/1500x500?text=Food+Delivery+Hero') no-repeat center center/cover;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-img-top {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: 200px;
+    object-fit: cover;
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+}

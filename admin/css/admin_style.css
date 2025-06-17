@@ -1,0 +1,46 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #343a40; /* Dark background for headers */
+    color: white;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.table th {
+    background-color: #e9ecef;
+}
+
+#loginMessage {
+    margin-top: 15px;
+}
+
+/* Dashboard specific styles */
+.card-text.fs-1 {
+    font-size: 3rem !important; /* Larger font size for stats */
+    font-weight: bold;
+    color: #007bff; /* Primary color */
+}
+
+/* Hide Bootstrap default d-none class if needed to prevent FOUC */
+.d-none {
+    display: none !important;
+}

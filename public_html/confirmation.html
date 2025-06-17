@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Food Delivery System</title>
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Food Delivery</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+                    <li class="nav-item"><a class="nav-link" href="order_tracking.html">Track Order</a></li>
+                </ul>
+                <div class="d-flex">
+                    <a href="cart.html" class="btn btn-outline-success me-2">Cart (<span id="cartItemCount">0</span>)</a>
+                    <a href="login.html" class="btn btn-primary" id="authButton">Login / Register</a>
+                    <button class="btn btn-danger d-none" id="logoutButton">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5 text-center">
+        <div class="card p-4 shadow-sm">
+            <h1 class="card-title text-success"><i class="bi bi-check-circle-fill"></i> Order Placed Successfully!</h1>
+            <p class="lead">Thank you for your order.</p>
+            <p>Your Order ID is: <strong id="confirmedOrderId">#XXXXXX</strong></p>
+            <p>You can track your order status <a href="order_tracking.html">here</a>.</p>
+            <a href="restaurants.html" class="btn btn-primary mt-3">Continue Shopping</a>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // Simple script to get order ID from URL or local storage if passed from checkout
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('order_id');
+            if (orderId) {
+                document.getElementById('confirmedOrderId').textContent = '#' + orderId;
+            } else {
+                document.getElementById('confirmedOrderId').textContent = '#N/A';
+            }
+        });
+    </script>
+</body>
+</html>

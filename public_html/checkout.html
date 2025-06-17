@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Food Delivery System</title>
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/forms.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Food Delivery</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="restaurants.html">Restaurants</a></li>
+                    <li class="nav-item"><a class="nav-link" href="order_tracking.html">Track Order</a></li>
+                </ul>
+                <div class="d-flex">
+                    <a href="cart.html" class="btn btn-outline-success me-2 active">Cart (<span id="cartItemCount">0</span>)</a>
+                    <a href="login.html" class="btn btn-primary" id="authButton">Login / Register</a>
+                    <button class="btn btn-danger d-none" id="logoutButton">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <h1 class="mb-4">Checkout</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">Delivery Information</div>
+                    <div class="card-body">
+                        <form id="deliveryInfoForm">
+                            <div class="mb-3">
+                                <label for="deliveryAddress" class="form-label">Delivery Address</label>
+                                <textarea class="form-control" id="deliveryAddress" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Contact Phone Number</label>
+                                <input type="tel" class="form-control" id="phoneNumber" pattern="^2547\d{8}$" placeholder="2547XXXXXXXX" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deliveryNotes" class="form-label">Delivery Notes (optional)</label>
+                                <textarea class="form-control" id="deliveryNotes" rows="2"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">Payment Method</div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="mpesaPayment" value="mpesa" checked>
+                            <label class="form-check-label" for="mpesaPayment">
+                                M-Pesa (STK Push)
+                            </label>
+                        </div>
+                        </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <ul class="list-group list-group-flush" id="checkoutCartItems">
+                            </ul>
+                        <hr>
+                        <p>Subtotal: KSh <span id="checkoutSubtotal">0.00</span></p>
+                        <p>Delivery Fee: KSh <span id="checkoutDeliveryFee">0.00</span></p>
+                        <hr>
+                        <h4 class="fw-bold">Total: KSh <span id="checkoutTotal">0.00</span></h4>
+                        <div id="checkoutMessage" class="alert alert-danger d-none" role="alert"></div>
+                        <button type="button" class="btn btn-success w-100 mt-3" id="placeOrderBtn">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+</html>

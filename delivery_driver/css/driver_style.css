@@ -1,0 +1,60 @@
+/* delivery_driver/css/driver_style.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.navbar {
+    margin-bottom: 20px;
+    background-color: #28a745 !important; /* Greenish tone for delivery */
+}
+
+.navbar-brand, .navbar-text, .navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+.card-header {
+    background-color: #218838; /* Darker green */
+    color: white;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.order-card .card-body {
+    padding: 1.5rem;
+}
+
+.order-details {
+    margin-bottom: 1rem;
+}
+
+.order-details strong {
+    color: #0056b3;
+}
+
+.btn-status-update {
+    margin-right: 5px;
+}
+
+#loginMessage {
+    margin-top: 15px;
+}
+
+/* Hide Bootstrap default d-none class if needed to prevent FOUC */
+.d-none {
+    display: none !important;
+}
