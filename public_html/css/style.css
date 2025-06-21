@@ -1,18 +1,24 @@
-/* public_html/css/style.css */
-
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
     color: #343a40;
+    background-image: url('public_html/images/background.jpg'); /* Adjust path as needed */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #f0f0f0;
 }
-
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
 .navbar {
     border-bottom: 1px solid #e9ecef;
 }
 
 .navbar-brand {
     font-weight: bold;
-    color: #28a745 !important; /* Green brand color */
+    color: #28a745 !important;
 }
 
 .hero-section {

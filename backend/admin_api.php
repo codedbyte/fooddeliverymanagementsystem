@@ -3,9 +3,8 @@ session_start();
 header('Content-Type: application/json');
 
 require_once 'database.php';
-require_once 'auth.php'; // For isAdminLoggedIn()
+require_once 'auth.php';
 
-// Ensure admin is logged in for all actions in this API
 if (!isAdminLoggedIn()) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
     exit();
@@ -18,9 +17,7 @@ switch ($action) {
         getDashboardStats();
         break;
     case 'manage_drivers':
-        // Example for driver management action
-        // This would involve ADD, UPDATE, DELETE logic for drivers
-        // manageDrivers();
+        
         break;
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid action.']);
@@ -47,7 +44,7 @@ function getDashboardStats() {
         $stats['pendingOrders'] = $result->fetch_assoc()['count'];
     }
 
-    // Get registered users (customers)
+    // for customer get
     $result = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'customer'");
     if ($result) {
         $stats['registeredUsers'] = $result->fetch_assoc()['count'];

@@ -21,8 +21,6 @@ function customErrorHandler($errno, $errstr, $errfile, $errline) {
 
 // Set the custom error handler
 set_error_handler("customErrorHandler");
-
-// Optional: Set a shutdown function to catch fatal errors (e.g., parse errors)
 function shutdownHandler() {
     $last_error = error_get_last();
     if ($last_error && ($last_error['type'] === E_ERROR || $last_error['type'] === E_PARSE || $last_error['type'] === E_CORE_ERROR || $last_error['type'] === E_COMPILE_ERROR)) {
@@ -30,11 +28,4 @@ function shutdownHandler() {
     }
 }
 register_shutdown_function("shutdownHandler");
-
-// You might also want to set an exception handler if you use exceptions
-// set_exception_handler("customExceptionHandler");
-// function customExceptionHandler($exception) {
-//     // Log and handle exceptions similarly
-// }
-
 ?>
