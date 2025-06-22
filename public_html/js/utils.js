@@ -8,12 +8,25 @@
  */
 async function fetchData(url) {
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json' // Ensure server returns JSON
+            }
+        });
+        const rawText = await response.text(); // Log raw response for debugging
+        console.log('[fetchData] Raw response:', rawText); // Log raw response
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+            // Log and throw error with status and body if not ok
+            console.error(`[fetchData] HTTP error! Status: ${response.status}, Body:`, rawText);
+            throw new Error(`HTTP error! Status: ${response.status}, Details: ${rawText}`);
         }
-        return await response.json();
+        try {
+            return JSON.parse(rawText); // Try to parse JSON
+        } catch (jsonErr) {
+            // Log invalid JSON payloads
+            console.error('[fetchData] Invalid JSON:', rawText);
+            throw new Error('Invalid JSON response');
+        }
     } catch (error) {
         console.error('FetchData error:', error);
         throw error; // Re-throw to be caught by the caller
@@ -32,15 +45,25 @@ async function postData(url, data) {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' // Ensure server returns JSON
             },
             body: JSON.stringify(data)
         });
+        const rawText = await response.text(); // Log raw response for debugging
+        console.log('[postData] Raw response:', rawText); // Log raw response
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+            // Log and throw error with status and body if not ok
+            console.error(`[postData] HTTP error! Status: ${response.status}, Body:`, rawText);
+            throw new Error(`HTTP error! Status: ${response.status}, Details: ${rawText}`);
         }
-        return await response.json();
+        try {
+            return JSON.parse(rawText); // Try to parse JSON
+        } catch (jsonErr) {
+            // Log invalid JSON payloads
+            console.error('[postData] Invalid JSON:', rawText);
+            throw new Error('Invalid JSON response');
+        }
     } catch (error) {
         console.error('PostData error:', error);
         throw error; // Re-throw to be caught by the caller

@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = loginForm.password.value;
 
             try {
-                const response = await postData('backend/auth.php', { action: 'customer_login', email, password });
+                const response = await postData('/fooddeliverymanagementsystem/backend/auth.php', { action: 'customer_login', email, password });
                 if (response.success) {
                     window.location.href = 'restaurants.html'; // Redirect to restaurants after login
                 } else {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await postData('backend/auth.php', {
+                const response = await postData('/fooddeliverymanagementsystem/backend/auth.php', {
                     action: 'customer_register',
                     username,
                     email,
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutButton) {
         logoutButton.addEventListener('click', async () => {
             try {
-                const response = await postData('backend/auth.php', { action: 'customer_logout' });
+                const response = await postData('/fooddeliverymanagementsystem/backend/auth.php', { action: 'customer_logout' });
                 if (response.success) {
                     // Clear cart on logout
                     localStorage.removeItem('cart');
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function checkCustomerSession() {
         try {
-            const response = await fetchData('backend/auth.php?action=check_customer_session');
+            const response = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
             if (response.loggedIn) {
                 if (authButton) authButton.classList.add('d-none');
                 if (logoutButton) logoutButton.classList.remove('d-none');

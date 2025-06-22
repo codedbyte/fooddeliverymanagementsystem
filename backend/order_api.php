@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 require_once 'database.php';
@@ -68,7 +70,9 @@ function updateOrderStatus($data) {
     $conn->close();
 }
 // backend/order_api.php (MODIFIED for driver orders)
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 require_once 'database.php';

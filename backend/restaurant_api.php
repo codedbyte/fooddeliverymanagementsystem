@@ -1,11 +1,13 @@
 <?php
 // backend/restaurant_api.php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 require_once 'database.php';
-require_once 'auth.php'; // Contains isAdminLoggedIn()
+require_once 'auth.php'; // Contains isAdminLoggedIn() and isCustomerLoggedIn()
 
 // For initial development/testing, ensure isAdminLoggedIn() in auth.php returns true
 // so you don't get 'Unauthorized access' before implementing actual login.
@@ -14,25 +16,72 @@ if (!isAdminLoggedIn()) {
     exit();
 }
 
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
-$data = json_decode(file_get_contents('php://input'), true);
+$rawInput = file_get_contents('php://input');
+$data = json_decode($rawInput, true);
+$action = $_GET['action'] ?? $_POST['action'] ?? ($data['action'] ?? '');
 
 switch ($action) {
     case 'get_all':
+        if (!isCustomerLoggedIn() && !isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please log in.']);
+            exit();
+        }
         getAllRestaurants();
         break;
+    case 'get_single':
+        if (!isCustomerLoggedIn() && !isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please log in.']);
+            exit();
+        }
+        getSingleRestaurant($_GET['id'] ?? null);
+        break;
     case 'add':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Admin only.']);
+            exit();
+        }
         addRestaurant($data);
         break;
     case 'update':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Admin only.']);
+            exit();
+        }
         updateRestaurant($data);
         break;
     case 'delete':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Admin only.']);
+            exit();
+        }
         deleteRestaurant($data);
         break;
     default:
-        echo json_encode(['success' => false, 'message' => 'Invalid action.']);
+        echo json_encode(['success' => false, 'message' => 'Invalid action for restaurants.']);
         break;
+}
+
+/**
+ * Retrieves a single restaurant by its ID.
+ */
+function getSingleRestaurant($id) {
+    if (empty($id)) {
+        echo json_encode(['success' => false, 'message' => 'Restaurant ID is required.']);
+        return;
+    }
+    $conn = getDbConnection();
+    $stmt = $conn->prepare("SELECT id, name, description, address, phone_number, email, image_url FROM restaurants WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows === 1) {
+        $restaurant = $result->fetch_assoc();
+        echo json_encode(['success' => true, 'data' => $restaurant]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Restaurant not found.']);
+    }
+    $stmt->close();
+    $conn->close();
 }
 
 /**

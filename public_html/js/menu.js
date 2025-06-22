@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadRestaurantDetailsAndMenu(id) {
         try {
             // Fetch restaurant details
-            const restaurantResponse = await fetchData(`backend/restaurant_api.php?action=get_single&id=${id}`);
+            const restaurantResponse = await fetchData(`/fooddeliverymanagementsystem/backend/restaurant_api.php?action=get_single&id=${id}`);
             if (restaurantResponse.success && restaurantResponse.data) {
                 restaurantNameElement.textContent = restaurantResponse.data.name;
                 restaurantDescriptionElement.textContent = restaurantResponse.data.description;
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Fetch menu items for this restaurant
-            const menuResponse = await fetchData(`backend/menu_api.php?action=get_by_restaurant&restaurant_id=${id}`);
+            const menuResponse = await fetchData(`/fooddeliverymanagementsystem/backend/menu_api.php?action=get_by_restaurant&restaurant_id=${id}`);
             if (menuResponse.success && menuResponse.data.length > 0) {
                 menuItemsList.innerHTML = ''; // Clear loading message
                 menuResponse.data.forEach(item => {

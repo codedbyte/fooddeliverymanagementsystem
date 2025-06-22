@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadCustomerInfo() {
         try {
-            const response = await fetchData('backend/auth.php?action=check_customer_session');
+            const response = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
             if (response.loggedIn) {
                 // Assuming session provides user details, or make another API call
-                const userDetailsResponse = await fetchData(`backend/user_api.php?action=get_user_profile&user_id=${response.user_id}`); // You'll need this API
+                const userDetailsResponse = await fetchData(`/fooddeliverymanagementsystem/backend/user_api.php?action=get_user_profile&user_id=${response.user_id}`); // You'll need this API
                 if (userDetailsResponse.success && userDetailsResponse.data) {
                     deliveryAddressInput.value = userDetailsResponse.data.address || '';
                     phoneNumberInput.value = userDetailsResponse.data.phone_number || '';
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 total_amount: totalAmount,
                 items: cart.items
             };
-            const orderResponse = await postData('backend/order_api.php', orderPayload);
+            const orderResponse = await postData('/fooddeliverymanagementsystem/backend/order_api.php', orderPayload);
 
             if (orderResponse.success) {
                 const orderId = orderResponse.order_id;
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     amount: totalAmount,
                     order_id: orderId
                 };
-                const mpesaResponse = await postData('backend/mpesa_api.php', mpesaPayload);
+                const mpesaResponse = await postData('/fooddeliverymanagementsystem/backend/mpesa_api.php', mpesaPayload);
 
                 if (mpesaResponse.success) {
                     // M-Pesa STK push initiated. Clear cart and redirect.

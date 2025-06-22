@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
 $user = 'root';   
-$password = '12345';  
-$food_delivery_db = 'food_delivey_db'; 
+$password = '';
+$food_delivery_db = 'fooddelivery'; 
 $ENVIRONMENT = 'development';
 
 

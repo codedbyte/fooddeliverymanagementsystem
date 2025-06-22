@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadRestaurants() {
         try {
-            const response = await fetchData('backend/restaurant_api.php?action=get_all');
+            const response = await fetchData('/fooddeliverymanagementsystem/backend/restaurant_api.php?action=get_all');
             if (response.success && response.data.length > 0) {
                 restaurantsList.innerHTML = ''; // Clear loading message
                 response.data.forEach(restaurant => {
