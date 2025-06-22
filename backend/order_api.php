@@ -63,8 +63,20 @@ function placeOrder($data, $userId) {
     $conn->begin_transaction();
 
     try {
+        // --- DATA VALIDATION AND SANITIZATION ---
+        $restaurantId = (int)($data['restaurant_id'] ?? 0);
+        $deliveryAddress = (string)($data['delivery_address'] ?? '');
+        $totalAmount = (float)($data['total_amount'] ?? 0.0);
+        $deliveryNotes = (string)($data['delivery_notes'] ?? '');
+        $items = is_array($data['items']) ? $data['items'] : [];
+
+        if (empty($restaurantId) || empty($deliveryAddress) || empty($items) || $totalAmount <= 0) {
+            throw new Exception("Invalid order data provided.");
+        }
+        // --- END VALIDATION ---
+
         $stmt = $conn->prepare("INSERT INTO orders (user_id, restaurant_id, delivery_address, total_amount, status, payment_status, notes) VALUES (?, ?, ?, ?, 'pending', 'pending', ?)");
-        $stmt->bind_param("iisds", $userId, $data['restaurant_id'], $data['delivery_address'], $data['total_amount'], $data['delivery_notes']);
+        $stmt->bind_param("iisds", $userId, $restaurantId, $deliveryAddress, $totalAmount, $deliveryNotes);
         
         if (!$stmt->execute()) {
             throw new Exception("Failed to create order: " . $stmt->error);
@@ -73,8 +85,14 @@ function placeOrder($data, $userId) {
         $stmt->close();
 
         $itemStmt = $conn->prepare("INSERT INTO order_items (order_id, menu_item_id, quantity, price_at_order) VALUES (?, ?, ?, ?)");
-        foreach ($data['items'] as $item) {
-            $itemStmt->bind_param("iiid", $orderId, $item['id'], $item['quantity'], $item['price']);
+        foreach ($items as $item) {
+            $itemId = (int)($item['id'] ?? 0);
+            $quantity = (int)($item['quantity'] ?? 0);
+            $price = (float)($item['price'] ?? 0.0);
+
+            if ($itemId <= 0 || $quantity <= 0) continue; // Skip invalid items
+
+            $itemStmt->bind_param("iiid", $orderId, $itemId, $quantity, $price);
             if (!$itemStmt->execute()) {
                 throw new Exception("Failed to add order item: " . $itemStmt->error);
             }
