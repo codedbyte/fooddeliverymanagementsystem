@@ -1,92 +1,161 @@
 // public_html/js/cart.js
 
-const CART_STORAGE_KEY = 'cart';
 const DELIVERY_FEE = 200.00; // Example flat delivery fee
 
-// Get cart from local storage
-function getCart() {
-    const cartJson = localStorage.getItem(CART_STORAGE_KEY);
-    return cartJson ? JSON.parse(cartJson) : { items: [], restaurant_id: null };
-}
-
-// Save cart to local storage
-function saveCart(cart) {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    updateCartCount(); // Update any cart counters on the page
-}
-
-// Add item to cart
-function addToCart(item) {
-    let cart = getCart();
-
-    // If cart is not empty and new item is from a different restaurant, clear cart
-    if (cart.items.length > 0 && cart.restaurant_id !== null && cart.restaurant_id !== item.restaurant_id) {
-        if (!confirm("Your cart contains items from a different restaurant. Do you want to clear your cart and add this item?")) {
-            return; // User cancelled
+// Get cart from the database via API
+async function getCart() {
+    try {
+        const response = await fetchData('/fooddeliverymanagementsystem/backend/cart_api.php?action=get_cart');
+        if (response.success) {
+            return response.data;
         }
-        cart = { items: [], restaurant_id: null }; // Clear cart
+        // If user is not logged in or an error occurs, return an empty cart structure
+        return { items: [], restaurant_id: null };
+    } catch (error) {
+        console.error("Failed to fetch cart:", error);
+        return { items: [], restaurant_id: null };
     }
+}
 
-    // Set restaurant ID for the cart if it's empty
-    if (cart.restaurant_id === null) {
-        cart.restaurant_id = item.restaurant_id;
-    }
+// Add item to cart in the database
+async function addToCart(item) {
+    await postData('/fooddeliverymanagementsystem/backend/cart_api.php', {
+        action: 'add_to_cart',
+        id: item.id,
+        quantity: item.quantity
+    });
+    await updateCartCount();
+}
 
-    const existingItem = cart.items.find(cartItem => cartItem.id === item.id);
+// Remove item from cart in the database
+async function removeFromCart(itemId) {
+    await postData('/fooddeliverymanagementsystem/backend/cart_api.php', {
+        action: 'remove_item',
+        id: itemId
+    });
+    await updateCartCount();
+}
 
-    if (existingItem) {
-        existingItem.quantity += item.quantity;
+// Update item quantity in the database
+async function updateCartQuantity(itemId, quantity) {
+    if (quantity <= 0) {
+        await removeFromCart(itemId);
     } else {
-        cart.items.push(item);
-    }
-    saveCart(cart);
-}
-
-// Remove item from cart
-function removeFromCart(itemId) {
-    let cart = getCart();
-    cart.items = cart.items.filter(item => item.id !== itemId);
-    if (cart.items.length === 0) {
-        cart.restaurant_id = null; // Reset restaurant ID if cart is empty
-    }
-    saveCart(cart);
-}
-
-// Update item quantity
-function updateCartQuantity(itemId, quantity) {
-    let cart = getCart();
-    const itemIndex = cart.items.findIndex(item => item.id === itemId);
-
-    if (itemIndex > -1) {
-        if (quantity <= 0) {
-            removeFromCart(itemId); // Remove if quantity is 0 or less
-        } else {
-            cart.items[itemIndex].quantity = quantity;
-            saveCart(cart);
-        }
+        await postData('/fooddeliverymanagementsystem/backend/cart_api.php', {
+            action: 'update_quantity',
+            id: itemId,
+            quantity: quantity
+        });
+        await updateCartCount();
     }
 }
 
-// Calculate cart subtotal
-function getCartSubtotal() {
-    return getCart().items.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+/**
+ * Calculates the subtotal of all items in the cart.
+ */
+function getCartSubtotal(cart) {
+    return cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
 }
 
-// Calculate total including delivery fee
-function getCartTotal() {
-    const subtotal = getCartSubtotal();
+/**
+ * Calculates the total cost including delivery fee.
+ */
+function getCartTotal(cart) {
+    const subtotal = getCartSubtotal(cart);
     return subtotal > 0 ? subtotal + DELIVERY_FEE : 0;
 }
 
-// Update cart item count in navbar
-function updateCartCount() {
-    const cartItemCountElement = document.getElementById('cartItemCount');
-    if (cartItemCountElement) {
-        const cart = getCart();
+/**
+ * Updates the cart count in the navbar.
+ */
+async function updateCartCount() {
+    const cart = await getCart();
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
         const totalItems = cart.items.reduce((count, item) => count + item.quantity, 0);
-        cartItemCountElement.textContent = totalItems;
+        cartCountElement.textContent = totalItems;
     }
 }
 
-// Call on page load to initialize cart count
-document.addEventListener('DOMContentLoaded', updateCartCount);
+// --- Cart Page Rendering Logic ---
+document.addEventListener('DOMContentLoaded', async () => {
+    // Run this code only on the cart page
+    if (document.getElementById('cartItemsList')) {
+        await renderCartPage();
+    }
+    // Always update cart count on any page load
+    await updateCartCount();
+});
+
+async function renderCartPage() {
+    const cart = await getCart();
+    const cartItemsList = document.getElementById('cartItemsList');
+    const cartSubtotalSpan = document.getElementById('cartSubtotal');
+    const cartDeliveryFeeSpan = document.getElementById('cartDeliveryFee');
+    const cartTotalSpan = document.getElementById('cartTotal');
+    const emptyCartMessage = document.getElementById('emptyCartMessage');
+    const cartSummary = document.getElementById('cartSummary');
+
+    cartItemsList.innerHTML = ''; // Clear existing items
+
+    if (cart.items.length === 0) {
+        if(emptyCartMessage) {
+            cartItemsList.appendChild(emptyCartMessage);
+            emptyCartMessage.classList.remove('d-none');
+        }
+        if (cartSummary) cartSummary.classList.add('d-none');
+    } else {
+        if (emptyCartMessage) emptyCartMessage.classList.add('d-none');
+        if (cartSummary) cartSummary.classList.remove('d-none');
+
+        cart.items.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'card mb-3';
+            itemDiv.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">${item.name}</h5>
+                        <strong>KSh ${(parseFloat(item.price) * item.quantity).toFixed(2)}</strong>
+                    </div>
+                    <p class="card-text">Price: KSh ${parseFloat(item.price).toFixed(2)}</p>
+                    <div class="d-flex justify-content-start align-items-center mt-2">
+                        <label class="me-3">Quantity:</label>
+                        <input type="number" class="form-control form-control-sm item-quantity-input" value="${item.quantity}" min="1" data-item-id="${item.id}" style="width: 80px;">
+                        <button class="btn btn-sm btn-outline-danger ms-auto remove-item-btn" data-item-id="${item.id}">Remove</button>
+                    </div>
+                </div>
+            `;
+            cartItemsList.appendChild(itemDiv);
+        });
+
+        // Update totals in the summary card
+        const subtotal = getCartSubtotal(cart);
+        cartSubtotalSpan.textContent = subtotal.toFixed(2);
+        cartDeliveryFeeSpan.textContent = DELIVERY_FEE.toFixed(2);
+        cartTotalSpan.textContent = getCartTotal(cart).toFixed(2);
+    }
+    
+    attachCartPageEventListeners();
+}
+
+function attachCartPageEventListeners() {
+    // For remove buttons
+    document.querySelectorAll('.remove-item-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const itemId = e.target.dataset.itemId;
+            await removeFromCart(itemId);
+            await renderCartPage(); // Re-render the cart
+        });
+    });
+
+    // For quantity inputs
+    document.querySelectorAll('.item-quantity-input').forEach(input => {
+        input.addEventListener('change', async (e) => {
+            const itemId = e.target.dataset.itemId;
+            const newQuantity = parseInt(e.target.value, 10);
+            await updateCartQuantity(itemId, newQuantity);
+            await renderCartPage(); // Re-render the cart
+        });
+    });
+}

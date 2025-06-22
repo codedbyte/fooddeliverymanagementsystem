@@ -73,13 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachAddToCartListeners() {
         document.querySelectorAll('.btn-add-to-cart').forEach(button => {
-            button.addEventListener('click', (e) => {
+            button.addEventListener('click', async (e) => {
                 const itemId = e.target.dataset.itemId;
                 const itemName = e.target.dataset.itemName;
                 const itemPrice = parseFloat(e.target.dataset.itemPrice);
                 const restaurantId = e.target.dataset.restaurantId;
 
-                addToCart({
+                // Check if user is logged in
+                const sessionResponse = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
+                if (!sessionResponse.loggedIn) {
+                    alert('You must be logged in to add items to your cart.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                await addToCart({
                     id: itemId,
                     name: itemName,
                     price: itemPrice,
@@ -87,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     quantity: 1
                 });
                 alert(`${itemName} added to cart!`);
-                updateCartCount(); // Update the cart count in the navbar
+                await updateCartCount(); // Update the cart count in the navbar
             });
         });
     }

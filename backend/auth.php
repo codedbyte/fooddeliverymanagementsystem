@@ -1,11 +1,12 @@
 <?php
 require_once 'error_handler.php';
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 header('Content-Type: application/json');
 
 require_once 'database.php'; // Include your database connection file
+require_once 'utils.php';
 
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
