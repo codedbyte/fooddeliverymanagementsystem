@@ -10,7 +10,7 @@ function customErrorHandler($errno, $errstr, $errfile, $errline) {
     error_log($error_message, 3, __DIR__ . '/../logs/php_errors.log'); // Adjust log file path
 
     // If in development, display the error
-    if (ENVIRONMENT === 'development') {
+    if ($ENVIRONMENT === 'development') {
         echo json_encode(['success' => false, 'message' => "An internal server error occurred.", 'debug' => "$errstr in $errfile on line $errline"]);
     } else {
         // In production, just send a generic error message
@@ -27,5 +27,5 @@ function shutdownHandler() {
         customErrorHandler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
     }
 }
-register_shutdown_function("shutdownHandler");
+register_shutdown_function($callback = "shutdownHandler");
 ?>
