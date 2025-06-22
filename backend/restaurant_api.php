@@ -1,20 +1,10 @@
 <?php
 // backend/restaurant_api.php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 header('Content-Type: application/json');
 
 require_once 'database.php';
 require_once 'auth.php'; // Contains isAdminLoggedIn() and isCustomerLoggedIn()
-
-// For initial development/testing, ensure isAdminLoggedIn() in auth.php returns true
-// so you don't get 'Unauthorized access' before implementing actual login.
-if (!isAdminLoggedIn()) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
-    exit();
-}
 
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
@@ -22,17 +12,11 @@ $action = $_GET['action'] ?? $_POST['action'] ?? ($data['action'] ?? '');
 
 switch ($action) {
     case 'get_all':
-        if (!isCustomerLoggedIn() && !isAdminLoggedIn()) {
-            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please log in.']);
-            exit();
-        }
+        // No login required to see restaurants
         getAllRestaurants();
         break;
     case 'get_single':
-        if (!isCustomerLoggedIn() && !isAdminLoggedIn()) {
-            echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please log in.']);
-            exit();
-        }
+        // No login required to see a single restaurant
         getSingleRestaurant($_GET['id'] ?? null);
         break;
     case 'add':
