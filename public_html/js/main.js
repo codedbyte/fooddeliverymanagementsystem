@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadFeaturedRestaurants() {
         try {
-            const response = await fetchData('backend/restaurant_api.php?action=get_all'); // Using fetchData from utils.js
+            const response = await fetchData('/fooddeliverymanagementsystem/backend/restaurant_api.php?action=get_all'); // Using fetchData from utils.js
             if (response.success && response.data.length > 0) {
                 featuredRestaurantsSection.innerHTML = ''; // Clear placeholder
                 const featuredCount = Math.min(response.data.length, 3); // Display up to 3 featured

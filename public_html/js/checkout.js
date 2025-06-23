@@ -1,5 +1,10 @@
 // public_html/js/checkout.js
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Immediately update the cart count in the navbar
+    if (typeof updateCartCount === 'function') {
+        await updateCartCount();
+    }
+
     const deliveryAddressInput = document.getElementById('deliveryAddress');
     const phoneNumberInput = document.getElementById('phoneNumber');
     const deliveryNotesInput = document.getElementById('deliveryNotes');
@@ -10,41 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const placeOrderBtn = document.getElementById('placeOrderBtn');
     const checkoutMessage = document.getElementById('checkoutMessage');
 
-    const cart = getCart(); // Get cart from cart.js
-
-    if (cart.items.length === 0) {
-        // If cart is empty, redirect to restaurants or show message
-        alert('Your cart is empty. Please add items before checking out.');
-        window.location.href = 'restaurants.html';
-        return;
-    }
-
-    // Load customer's default address/phone if logged in
+    // Load customer's default address/phone if logged in and display cart summary
     loadCustomerInfo();
     displayCheckoutSummary();
 
     async function loadCustomerInfo() {
         try {
-            const response = await fetchData('backend/auth.php?action=check_customer_session');
-            if (response.loggedIn) {
-                // Assuming session provides user details, or make another API call
-                const userDetailsResponse = await fetchData(`backend/user_api.php?action=get_user_profile&user_id=${response.user_id}`); // You'll need this API
-                if (userDetailsResponse.success && userDetailsResponse.data) {
-                    deliveryAddressInput.value = userDetailsResponse.data.address || '';
-                    phoneNumberInput.value = userDetailsResponse.data.phone_number || '';
-                }
+            const response = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
+            if (response.loggedIn && response.user_id) {
+                // If you have a user profile API, you can fetch and pre-fill details
+                // For now, we assume the user will enter them manually
             } else {
                 alert('Please log in to proceed with checkout.');
                 window.location.href = 'login.html';
             }
         } catch (error) {
             console.error('Error loading customer info:', error);
-            alert('Failed to load your information. Please log in again.');
-            window.location.href = 'login.html';
+            // Allow checkout but user must fill details
         }
     }
 
-    function displayCheckoutSummary() {
+    async function displayCheckoutSummary() {
+        const cart = await getCart(); // Fetch cart from database
+
+        if (cart.items.length === 0) {
+            alert('Your cart is empty. Please add items before checking out.');
+            window.location.href = 'restaurants.html';
+            return;
+        }
+
         checkoutCartItemsList.innerHTML = '';
         cart.items.forEach(item => {
             const li = document.createElement('li');
@@ -56,16 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
             checkoutCartItemsList.appendChild(li);
         });
 
-        checkoutSubtotalSpan.textContent = getCartSubtotal().toFixed(2);
+        const subtotal = getCartSubtotal(cart);
+        checkoutSubtotalSpan.textContent = subtotal.toFixed(2);
         checkoutDeliveryFeeSpan.textContent = DELIVERY_FEE.toFixed(2);
-        checkoutTotalSpan.textContent = getCartTotal().toFixed(2);
+        checkoutTotalSpan.textContent = (subtotal + DELIVERY_FEE).toFixed(2);
     }
 
     placeOrderBtn.addEventListener('click', async () => {
         const deliveryAddress = deliveryAddressInput.value.trim();
         const phoneNumber = phoneNumberInput.value.trim();
         const deliveryNotes = deliveryNotesInput.value.trim();
-        const totalAmount = getCartTotal();
+        const cart = await getCart(); // Get fresh cart data before placing order
+        const totalAmount = getCartTotal(cart);
 
         if (!deliveryAddress || !phoneNumber) {
             checkoutMessage.textContent = 'Please provide your delivery address and phone number.';
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 total_amount: totalAmount,
                 items: cart.items
             };
-            const orderResponse = await postData('backend/order_api.php', orderPayload);
+            const orderResponse = await postData('/fooddeliverymanagementsystem/backend/order_api.php', orderPayload);
 
             if (orderResponse.success) {
                 const orderId = orderResponse.order_id;
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     amount: totalAmount,
                     order_id: orderId
                 };
-                const mpesaResponse = await postData('backend/mpesa_api.php', mpesaPayload);
+                const mpesaResponse = await postData('/fooddeliverymanagementsystem/backend/mpesa_api.php', mpesaPayload);
 
                 if (mpesaResponse.success) {
                     // M-Pesa STK push initiated. Clear cart and redirect.

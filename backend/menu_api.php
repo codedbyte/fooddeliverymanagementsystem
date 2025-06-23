@@ -1,17 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 require_once 'database.php';
 require_once 'auth.php';
 
-if (!isAdminLoggedIn()) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
-    exit();
-}
-
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
-$data = json_decode(file_get_contents('php://input'), true);
+$rawInput = file_get_contents('php://input');
+$data = json_decode($rawInput, true);
+$action = $_GET['action'] ?? $_POST['action'] ?? ($data['action'] ?? '');
 
 switch ($action) {
     case 'get_by_restaurant': // For customer view and admin edit
@@ -19,16 +17,28 @@ switch ($action) {
         getMenuItemsByRestaurant($restaurantId);
         break;
     case 'add':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
+            exit();
+        }
         addMenuItem($data);
         break;
     case 'update':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
+            exit();
+        }
         updateMenuItem($data);
         break;
     case 'delete':
+        if (!isAdminLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
+            exit();
+        }
         deleteMenuItem($data);
         break;
     default:
-        echo json_encode(['success' => false, 'message' => 'Invalid action.']);
+        echo json_encode(['success' => false, 'message' => 'Invalid action for menu items.']);
         break;
 }
 

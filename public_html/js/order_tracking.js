@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadCustomerOrders() {
         try {
-            const sessionResponse = await fetchData('backend/auth.php?action=check_customer_session');
+            const sessionResponse = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
             if (!sessionResponse.loggedIn) {
                 recentOrdersList.innerHTML = '<p class="text-danger">Please log in to view your orders.</p>';
                 return;
             }
             const userId = sessionResponse.user_id; // Get logged-in user's ID
 
-            const response = await fetchData(`backend/order_api.php?action=get_user_orders&user_id=${userId}`); // You'll need this API
+            const response = await fetchData(`/fooddeliverymanagementsystem/backend/order_api.php?action=get_user_orders&user_id=${userId}`);
             if (response.success && response.data.length > 0) {
                 recentOrdersList.innerHTML = ''; // Clear loading message
                 response.data.forEach(order => {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function displayOrderTracking(orderId) {
         try {
-            const response = await fetchData(`backend/order_api.php?action=get_order_details_for_tracking&order_id=${orderId}`); // You'll need this API
+            const response = await fetchData(`/fooddeliverymanagementsystem/backend/order_api.php?action=get_order_details_for_tracking&order_id=${orderId}`); // You'll need this API
             if (response.success && response.data) {
                 const order = response.data;
                 trackingOrderIdSpan.textContent = order.id;

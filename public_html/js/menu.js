@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadRestaurantDetailsAndMenu(id) {
         try {
             // Fetch restaurant details
-            const restaurantResponse = await fetchData(`backend/restaurant_api.php?action=get_single&id=${id}`);
+            const restaurantResponse = await fetchData(`/fooddeliverymanagementsystem/backend/restaurant_api.php?action=get_single&id=${id}`);
             if (restaurantResponse.success && restaurantResponse.data) {
                 restaurantNameElement.textContent = restaurantResponse.data.name;
                 restaurantDescriptionElement.textContent = restaurantResponse.data.description;
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Fetch menu items for this restaurant
-            const menuResponse = await fetchData(`backend/menu_api.php?action=get_by_restaurant&restaurant_id=${id}`);
+            const menuResponse = await fetchData(`/fooddeliverymanagementsystem/backend/menu_api.php?action=get_by_restaurant&restaurant_id=${id}`);
             if (menuResponse.success && menuResponse.data.length > 0) {
                 menuItemsList.innerHTML = ''; // Clear loading message
                 menuResponse.data.forEach(item => {
@@ -73,13 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachAddToCartListeners() {
         document.querySelectorAll('.btn-add-to-cart').forEach(button => {
-            button.addEventListener('click', (e) => {
+            button.addEventListener('click', async (e) => {
                 const itemId = e.target.dataset.itemId;
                 const itemName = e.target.dataset.itemName;
                 const itemPrice = parseFloat(e.target.dataset.itemPrice);
                 const restaurantId = e.target.dataset.restaurantId;
 
-                addToCart({
+                // Check if user is logged in
+                const sessionResponse = await fetchData('/fooddeliverymanagementsystem/backend/auth.php?action=check_customer_session');
+                if (!sessionResponse.loggedIn) {
+                    alert('You must be logged in to add items to your cart.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                await addToCart({
                     id: itemId,
                     name: itemName,
                     price: itemPrice,
@@ -87,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     quantity: 1
                 });
                 alert(`${itemName} added to cart!`);
-                updateCartCount(); // Update the cart count in the navbar
+                await updateCartCount(); // Update the cart count in the navbar
             });
         });
     }

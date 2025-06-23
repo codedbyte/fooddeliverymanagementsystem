@@ -9,8 +9,9 @@ function customErrorHandler($errno, $errstr, $errfile, $errline) {
     $error_message = "[".date("Y-m-d H:i:s")."] ERROR: [$errno] $errstr in $errfile on line $errline\n";
     error_log($error_message, 3, __DIR__ . '/../logs/php_errors.log'); // Adjust log file path
 
+    global $ENVIRONMENT;
     // If in development, display the error
-    if ($ENVIRONMENT === 'development') {
+    if (isset($ENVIRONMENT) && $ENVIRONMENT === 'development') {
         echo json_encode(['success' => false, 'message' => "An internal server error occurred.", 'debug' => "$errstr in $errfile on line $errline"]);
     } else {
         // In production, just send a generic error message
